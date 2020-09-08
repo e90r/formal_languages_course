@@ -27,7 +27,7 @@ def test_matrix_multiplication():
 
 
 def test_automata_intersection():
-    states = [State(str(i)) for i in range(6)]
+    states = [State(str(i)) for i in range(4)]
     symb_a = Symbol('a')
     symb_b = Symbol('b')
     symb_c = Symbol('c')
@@ -42,13 +42,13 @@ def test_automata_intersection():
     enfa_1.add_final_state(states[0])
 
     enfa_2 = EpsilonNFA()
-    enfa_2.add_start_state(states[3])
+    enfa_2.add_start_state(states[0])
     enfa_2.add_transitions([
-        (states[3], symb_a, states[4]),
-        (states[4], symb_b, states[4]),
-        (states[4], symb_c, states[5])
+        (states[0], symb_a, states[1]),
+        (states[1], symb_b, states[1]),
+        (states[1], symb_c, states[2])
     ])
-    enfa_2.add_final_state(states[5])
+    enfa_2.add_final_state(states[2])
 
     result = enfa_1 & enfa_2
 
