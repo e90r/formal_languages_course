@@ -30,7 +30,7 @@ usage: main.py [-h] [--from VERTICES_FROM] [--to VERTICES_TO] path_to_graph path
 Intersect graph and regex, and show reachability of graph vertices
 
 positional arguments:
-  path_to_graph         Path to graph represented in (from, value, to) tuples
+  path_to_graph         Path to graph represented in 'from value to' tuples
   path_to_regex         Path to regex
 
 optional arguments:
