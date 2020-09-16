@@ -43,7 +43,14 @@ def main():
 
     intersection = graph.intersect(regex)
 
+    print('Edges for each label:')
+
+    for (value, matrix) in intersection.matrices.items():
+        print('{} has {} edges'.format(value, matrix.nvals))
+
     closure = intersection.transitive_closure()
+
+    print('Reachable vertices:')
 
     reachable = BMGraph.get_reachable_vertices(closure)
     for (v_from, v_to) in reachable:
