@@ -1,5 +1,5 @@
 from argparse import ArgumentParser
-from BMGraph import BMGraph
+from src.BMGraph import BMGraph
 
 
 def read_vertices(path):
@@ -12,7 +12,7 @@ def main():
                                         and show reachability of graph vertices""")
     parser.add_argument(
         'path_to_graph',
-        help='Path to graph represented in (from, value, to) tuples'
+        help='Path to graph represented in \'from value to\' tuples'
     )
     parser.add_argument(
         'path_to_regex',
@@ -30,8 +30,8 @@ def main():
     )
     args = parser.parse_args()
 
-    graph = BMGraph.from_edges(args.path_to_graph)
-    regex = BMGraph.from_regex(args.path_to_regex)
+    graph = BMGraph.from_edges_file(args.path_to_graph)
+    regex = BMGraph.from_regex_file(args.path_to_regex)
 
     if args.vertices_from is not None:
         vertices = read_vertices(args.vertices_from)
@@ -47,10 +47,9 @@ def main():
 
     reachable = BMGraph.get_reachable_vertices(closure)
     for (v_from, v_to) in reachable:
-        v_from = intersection.states_dict[v_from]
-        v_to = intersection.states_dict[v_to]
         if v_from in intersection.start_states and v_to in intersection.final_states:
-            print('{} -> {}'.format(v_from // graph.states_amount, v_to // graph.states_amount))
+            print('{} -> {}'.format(v_from // regex.states_amount,
+                                    v_to // regex.states_amount))
 
 
 if __name__ == "__main__":
