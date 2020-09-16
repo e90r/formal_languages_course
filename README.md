@@ -17,5 +17,5 @@ pip3 install pyformlang
 
 And run tests:
 ```
-pytest tests.py
+pytest
 ```
