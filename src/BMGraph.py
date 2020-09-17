@@ -87,8 +87,12 @@ class BMGraph:
         for matrix in self.matrices.values():
             closure |= matrix
 
-        for _ in range(self.states_amount):
+        old_nvals = -1
+        new_nvals = closure.nvals
+        while old_nvals != new_nvals:
             closure += closure @ closure
+            old_nvals = new_nvals
+            new_nvals = closure.nvals
 
         return closure
 
