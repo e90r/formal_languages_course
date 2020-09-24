@@ -114,7 +114,7 @@ def test_intersection_random(random_data):
             v_to = matrix_lists[1][i]
 
             graph_from, graph_to = v_from // regex.states_amount, v_to // regex.states_amount
-            regex_from, regex_to = v_from // graph.states_amount, v_to // graph.states_amount
+            regex_from, regex_to = v_from % regex.states_amount, v_to % regex.states_amount
 
             assert matrix[v_from, v_to] == 1
             assert graph.matrices[value][graph_from, graph_to] == 1

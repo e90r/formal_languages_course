@@ -1,7 +1,9 @@
 from pyformlang.finite_automaton import FiniteAutomaton, State, Symbol
 from pyformlang.finite_automaton.nondeterministic_finite_automaton import NondeterministicFiniteAutomaton
 from pyformlang.regular_expression import Regex
+from pyformlang.regular_expression import python_regex
 from pygraphblas import Matrix, BOOL
+from pygraphblas import semiring
 
 
 # Graph represented with Boolean Matrices
@@ -84,13 +86,16 @@ class BMGraph:
     def transitive_closure(self):
         closure = Matrix.sparse(BOOL, self.states_amount, self.states_amount)
 
-        for matrix in self.matrices.values():
-            closure |= matrix
+        with semiring.LOR_LAND_BOOL:
+            for matrix in self.matrices.values():
+                closure += matrix
 
+        temp = closure.dup()
         old_nvals = -1
         new_nvals = closure.nvals
         while old_nvals != new_nvals:
-            closure += closure @ closure
+            with semiring.LOR_LAND_BOOL:
+                closure += temp @ closure
             old_nvals = new_nvals
             new_nvals = closure.nvals
 
@@ -140,11 +145,15 @@ class BMGraph:
 
         return BMGraph.from_edges_list(edges_list)
 
-    def from_regex_string(regex):
-        dfa = Regex.from_python_regex(regex).to_epsilon_nfa().to_deterministic().minimize()
+    def from_regex_string(regex, python_regex=True):
+        if python_regex:
+            dfa = Regex.from_python_regex(
+                regex).to_epsilon_nfa().to_deterministic().minimize()
+        else:
+            dfa = Regex(regex).to_epsilon_nfa().to_deterministic().minimize()
         return BMGraph(dfa)
 
-    def from_regex_file(path):
+    def from_regex_file(path, python_regex=True):
         with open(path, 'r') as g:
             line = g.readline()
-            return BMGraph.from_regex_string(line)
+            return BMGraph.from_regex_string(line, python_regex)

@@ -40,3 +40,11 @@ optional arguments:
 ```
 
 Example: `python main.py sample_graph.txt sample_regex.txt`
+
+## Assignment 3
+
+Benchmarking different ways of transitive closure: squaring and multiplying by adjacency matrix.
+
+Gained results showed that almost no difference can be found between those two algorithms.
+
+Full results you can see at `./benchmarks/report.pdf`
