@@ -69,9 +69,10 @@ class GrammarAlgos:
                 for k in range(i):
                     first, second = m[j][j + k], m[j + k + 1][j + i]
                     for prod in cfg.productions:
-                        if (len(prod.body) == 2
-                            and prod.body[0] in first
-                                and prod.body[1] in second):
+                        if (
+                            len(prod.body) == 2 and prod.body[0] in first and
+                            prod.body[1] in second
+                        ):
                             m[j][j + i].add(prod.head)
 
         return cfg.start_symbol in m[0][size - 1]
