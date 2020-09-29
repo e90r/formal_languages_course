@@ -95,7 +95,6 @@ class GrammarAlgos:
             for prod in cfg.productions:
                 if prod.body == [Terminal(t)]:
                     res[prod.head] = matrix
-                    break
 
         for var, matrix in res.items():
             for i, j, _ in zip(*matrix.to_lists()):
@@ -135,4 +134,5 @@ class GrammarAlgos:
                 matrix[v_from, v_to] = True
                 res[var] = matrix
 
-        return res[cfg.start_symbol]
+        return res.get(cfg.start_symbol, Matrix.sparse(
+            BOOL, graph.states_amount, graph.states_amount))
