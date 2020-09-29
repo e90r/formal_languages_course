@@ -1,6 +1,6 @@
 # Formal Languages Course
 
-[![Build Status](https://travis-ci.org/e90r/formal_languages_course.svg?branch=assignment_1)](https://travis-ci.org/e90r/formal_languages_course)
+[![Build Status](https://travis-ci.org/e90r/formal_languages_course.svg?branch=assignment_4)](https://travis-ci.org/e90r/formal_languages_course)
 
 ## Assignment 1
 
@@ -48,3 +48,9 @@ Benchmarking different ways of transitive closure: squaring and multiplying by a
 Gained results showed that almost no difference can be found between those two algorithms.
 
 Full results you can see at `./benchmarks/report.pdf`
+
+## Assignment 4
+
+CYK and Hellings CFPQ algorithms. See at `./src/GrammarAlgos.py`
+
+Note: to run all tests, see assignment 1.
