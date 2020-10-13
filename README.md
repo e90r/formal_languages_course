@@ -1,6 +1,6 @@
 # Formal Languages Course
 
-[![Build Status](https://travis-ci.org/e90r/formal_languages_course.svg?branch=assignment_4)](https://travis-ci.org/e90r/formal_languages_course)
+[![Build Status](https://travis-ci.org/e90r/formal_languages_course.svg?branch=assignment_5)](https://travis-ci.org/e90r/formal_languages_course)
 
 ## Assignment 1
 
@@ -52,5 +52,9 @@ Full results you can see at `./benchmarks/report.pdf`
 ## Assignment 4
 
 CYK and Hellings CFPQ algorithms. See at `./src/GrammarAlgos.py`
+
+## Assignment 5
+
+Matrix multiplication and Tensor product CFPQ algorithms. See them at `./src/GrammarAlgos.py`
 
 Note: to run all tests, see assignment 1.
