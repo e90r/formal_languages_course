@@ -1,4 +1,7 @@
 from collections import deque
+from pyformlang.cfg import terminal
+from pyformlang.cfg import production
+from pygraphblas import semiring
 
 from pygraphblas.matrix import Matrix
 from pygraphblas.types import BOOL
@@ -33,7 +36,7 @@ class GrammarAlgos:
 
             for line in g.readlines():
                 rule = line.replace('\n', '').split(' ')
-                var = rule[0]
+                var = Variable(rule[0])
                 vars.add(var)
                 body = []
                 if len(rule) > 1:
@@ -80,6 +83,8 @@ class GrammarAlgos:
     def Hellings(grammar: CFG, graph: BMGraph):
         res = dict()
         m = deque()
+        terminal_prods = set()
+        nonterminal_prods = set()
 
         if grammar.generate_epsilon():
             matrix = Matrix.sparse(
@@ -91,10 +96,20 @@ class GrammarAlgos:
 
         cfg = grammar.to_normal_form()
 
-        for t, matrix in graph.matrices.items():
-            for prod in cfg.productions:
-                if prod.body == [Terminal(t)]:
-                    res[prod.head] = matrix
+        for prod in cfg.productions:
+            if len(prod.body) == 1:
+                terminal_prods.add(prod)
+            else:
+                nonterminal_prods.add(prod)
+
+        with semiring.LOR_LAND_BOOL:
+            for t, matrix in graph.matrices.items():
+                for prod in terminal_prods:
+                    if prod.body == [Terminal(t)]:
+                        if prod.head not in res:
+                            res[prod.head] = matrix.dup()
+                        else:
+                            res[prod.head] += matrix.dup()
 
         for var, matrix in res.items():
             for i, j, _ in zip(*matrix.to_lists()):
@@ -106,7 +121,7 @@ class GrammarAlgos:
 
             for new_var, matrix in res.items():
                 for new_from, _ in matrix[:, v_from]:
-                    for prod in cfg.productions:
+                    for prod in nonterminal_prods:
                         if (
                             len(prod.body) == 2 and prod.body[0] == new_var and
                             prod.body[1] == var and
@@ -118,7 +133,7 @@ class GrammarAlgos:
 
             for new_var, matrix in res.items():
                 for new_to, _ in matrix[v_to, :]:
-                    for prod in cfg.productions:
+                    for prod in nonterminal_prods:
                         if (
                             len(prod.body) == 2 and prod.body[0] == var and
                             prod.body[1] == new_var and
@@ -135,4 +150,125 @@ class GrammarAlgos:
                 res[var] = matrix
 
         return res.get(cfg.start_symbol, Matrix.sparse(
+            BOOL, graph.states_amount, graph.states_amount))
+
+    def cfpq_matrix_multiplication(grammar: CFG, graph: BMGraph):
+        res = dict()
+        terminal_prods = set()
+        nonterminal_prods = set()
+
+        if grammar.generate_epsilon():
+            matrix = Matrix.sparse(
+                BOOL, graph.states_amount, graph.states_amount)
+            for i in range(graph.states_amount):
+                matrix[i, i] = True
+            res[grammar.start_symbol] = matrix
+
+        cfg = grammar.to_normal_form()
+
+        for prod in cfg.productions:
+            if len(prod.body) == 1:
+                terminal_prods.add(prod)
+            else:
+                nonterminal_prods.add(prod)
+
+        with semiring.LOR_LAND_BOOL:
+            for t, matrix in graph.matrices.items():
+                for prod in terminal_prods:
+                    if prod.body == [Terminal(t)]:
+                        if prod.head not in res:
+                            res[prod.head] = matrix.dup()
+                        else:
+                            res[prod.head] += matrix.dup()
+
+        with semiring.LOR_LAND_BOOL:
+            old_changed = set()
+            new_changed = cfg.variables
+
+            while len(new_changed) > 0:
+                old_changed = new_changed
+                new_changed = set()
+
+                for prod in nonterminal_prods:
+                    if prod.body[0] not in res or prod.body[1] not in res:
+                        continue
+
+                    if (
+                        prod.body[0] in old_changed
+                        or prod.body[1] in old_changed
+                    ):
+                        matrix = res.get(prod.head, Matrix.sparse(
+                            BOOL, graph.states_amount, graph.states_amount))
+                        old_nvals = matrix.nvals
+                        res[prod.head] = matrix + \
+                            (res[prod.body[0]] @ res[prod.body[1]])
+
+                        if (res[prod.head].nvals != old_nvals):
+                            new_changed.add(prod.head)
+
+        return res.get(cfg.start_symbol, Matrix.sparse(
+            BOOL, graph.states_amount, graph.states_amount))
+
+    def cfpq_tensor_product(grammar: CFG, graph: BMGraph):
+        res = graph.dup()
+
+        rfa = BMGraph()
+        rfa_heads = dict()
+
+        rfa.states_amount = sum(
+            [len(prod.body) + 1 for prod in grammar.productions])
+        rfa.states = set(range(rfa.states_amount))
+        index = 0
+        for prod in grammar.productions:
+            start_state = index
+            final_state = index + len(prod.body)
+
+            rfa.start_states.add(start_state)
+            rfa.final_states.add(final_state)
+            rfa_heads[(start_state, final_state)] = prod.head.value
+
+            for var in prod.body:
+                matrix = rfa.matrices.get(var.value, Matrix.sparse(
+                    BOOL, rfa.states_amount, rfa.states_amount))
+
+                matrix[index, index + 1] = True
+                rfa.matrices[var.value] = matrix
+                index += 1
+
+            index += 1
+
+        for prod in grammar.productions:
+            if len(prod.body) == 0:
+                matrix = Matrix.sparse(
+                    BOOL, graph.states_amount, graph.states_amount)
+
+                for i in range(graph.states_amount):
+                    matrix[i, i] = True
+
+                res.matrices[prod.head] = matrix
+
+        is_changing = True
+        while is_changing:
+            is_changing = False
+            intersection = rfa.intersect(res)
+            closure = intersection.transitive_closure()
+
+            for i, j, _ in zip(*closure.to_lists()):
+                rfa_from, rfa_to = i // res.states_amount, j // res.states_amount
+                graph_from, graph_to = i % res.states_amount, j % res.states_amount
+
+                if (rfa_from, rfa_to) not in rfa_heads:
+                    continue
+
+                var = rfa_heads[(rfa_from, rfa_to)]
+
+                matrix = res.matrices.get(var, Matrix.sparse(
+                    BOOL, graph.states_amount, graph.states_amount))
+
+                if matrix.get(graph_from, graph_to) is None:
+                    is_changing = True
+                    matrix[graph_from, graph_to] = True
+                    res.matrices[var] = matrix
+
+        return res.matrices.get(grammar.start_symbol, Matrix.sparse(
             BOOL, graph.states_amount, graph.states_amount))
