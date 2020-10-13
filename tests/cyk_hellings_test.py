@@ -48,7 +48,7 @@ def test_cyk_3():
 
 # classic example
 def test_hellings_1():
-    test_path = os.path.join(os.getcwd(), 'tests/data/hellings/test1')
+    test_path = os.path.join(os.getcwd(), 'tests/data/cfpq/test1')
 
     graph = BMGraph.from_edges_file(
         os.path.join(test_path, 'graph.txt'))
@@ -65,7 +65,7 @@ def test_hellings_1():
 
 # random test from my head
 def test_hellings_2():
-    test_path = os.path.join(os.getcwd(), 'tests/data/hellings/test2')
+    test_path = os.path.join(os.getcwd(), 'tests/data/cfpq/test2')
 
     graph = BMGraph.from_edges_file(
         os.path.join(test_path, 'graph.txt'))
