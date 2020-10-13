@@ -1,0 +1,5 @@
+S
+T a T
+T b S
+S a S
+S b T
