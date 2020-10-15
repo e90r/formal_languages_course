@@ -48,6 +48,20 @@ class BMGraph:
 
         return bool_matrices
 
+    def dup(self):
+        res = BMGraph()
+
+        res.states_amount = self.states_amount
+        res.states = self.states
+        res.start_states = self.start_states
+        res.final_states = self.final_states
+        res.values = self.values
+
+        for label, matrix in self.matrices.items():
+            res.matrices[label] = matrix.dup()
+
+        return res
+
     def to_automaton(self):
         nfa = NondeterministicFiniteAutomaton()
 
