@@ -58,3 +58,15 @@ CYK and Hellings CFPQ algorithms. See at `./src/GrammarAlgos.py`
 Matrix multiplication and Tensor product CFPQ algorithms. See them at `./src/GrammarAlgos.py`
 
 Note: to run all tests, see assignment 1.
+
+## Assignment 6
+
+Benchmarking Hellings, Matrix multiplication and Tensor product algorithms.
+
+Full results you can see at `./benchmarks/cfpq_report.pdf
+
+## Assignment 7
+
+Implemented syntax for script language for graph database. Grammar can be found in `./src/db-language/grammar.txt` file.
+
+See README about syntax [HERE](src/db-language/readme.md).
