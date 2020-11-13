@@ -3,7 +3,7 @@ SCRIPT eps
 STMT connect " PATH "
 STMT STRING : PATTERN
 STMT select OBJ from GRAPH
-GRAPH ( GRAPH && G1 )
+GRAPH ( GRAPH & G1 )
 GRAPH G1
 G1 GRAPH
 G1 grammar

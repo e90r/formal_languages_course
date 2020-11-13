@@ -2,18 +2,18 @@ from src.GrammarAlgos import GrammarAlgos
 
 
 keywords = {
-    'connect', 'select', 'from', 'grammar', 'setStartAndFinal',
-    'eps', 'count', 'edges', 'filter', 'or', 'and', 'not',
-    'hasLbl', 'isStart', 'isFinal', 'term', 'nonterm',
-    '"', '(', ')', ':', '..', '&&', '[', ']', '{', '}',
-    ',', '->', '.', '+', '?', '|', '*', '_'
+    'connect', 'select', 'from', 'grammar', 'setStartAndFinal', 'e', 'count',
+    'edges', 'filter', 'hasLbl', 'isStart', 'isFinal', 'term', 'nonterm',
+    '"', '(', ')', ':', '&', '[', ']', '{', '}',
+    ',', '->', '.', '+', '?', '|', '*', '_', '!'
 }
 
 
 def prepare_script(script):
     res = list()
-    for s in ['\n', '"', '(', ')', ':', '&&', '[', ']', '{', '}', ',', '->',
-              '.', '+', '?', '|', '*', '_']:
+    script = script.replace('\n', ' ')
+    for s in ['"', '(', ')', ':', '&', '[', ']', '{', '}',
+              ',', '->', '.', '+', '?', '|', '*', '_', '!']:
         script = script.replace(s, f' {s} ')
     for w in script.split():
         if w in keywords:

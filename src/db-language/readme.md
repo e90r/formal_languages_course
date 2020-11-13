@@ -33,7 +33,7 @@ Script consists of 3 types of statements:
         - `"%graph_name%"` will load a graph file from database
         - `grammar` will take grammar that was defined with productions in the script
         - `[%pattern%]` will take regex of a given pattern 
-        - `%graph_1% && %graph_2%` will take an intersection of graph1 and graph2
+        - `%graph_1% & %graph_2%` will take an intersection of graph1 and graph2
         - `setStartAndFinal %vertices% %vertices% %graph%` will take a graph with specified start and final vertices
             - `%vertices%` can be represented in following formats:
                 - `{v1, v2, v3, ...}` - as a set
@@ -42,7 +42,7 @@ Script consists of 3 types of statements:
 
     - ### Examples:
         ```
-        select count edges from ("graph" && grammar)
+        select count edges from ("graph" & grammar)
         select count edges from (setStartAndFinal 0:6 {1,3,4} "graph")
         select filter (v, e, u) -> (e hasLbl abc) : edges from "graph"
         select filter (v, e, u) -> (e hasLbl abc & isStart v | !(isFinal u)) : edges from "graph"
