@@ -63,7 +63,7 @@ Note: to run all tests, see assignment 1.
 
 Benchmarking Hellings, Matrix multiplication and Tensor product algorithms.
 
-Full results you can see at `./benchmarks/cfpq_report.pdf
+Full results you can see at `./benchmarks/cfpq_report.pdf`
 
 ## Assignment 7
 
