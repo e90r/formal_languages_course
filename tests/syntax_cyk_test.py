@@ -25,6 +25,16 @@ def test_correct_syntax():
     assert run_cyk_on_script(script)
 
     script = '''
+    select count edges from (setStartAndFinal _ _ "graph")
+    '''
+    assert run_cyk_on_script(script)
+
+    script = '''
+    select count edges from (setStartAndFinal _ _ ("graph" && grammar))
+    '''
+    assert run_cyk_on_script(script)
+
+    script = '''
     select filter (v, e, u) -> (e hasLbl abc) : edges from "graph"
     '''
     assert run_cyk_on_script(script)
@@ -35,7 +45,7 @@ def test_correct_syntax():
     assert run_cyk_on_script(script)
 
     script = '''
-    select count edges from ("graph" && [term(a).term(b)*.(term(c)|term(d))+])
+    select count edges from [term(a)?.term(b)*.(term(c)|term(d))+]
     '''
     assert run_cyk_on_script(script)
 
@@ -45,7 +55,7 @@ def test_correct_syntax():
     assert run_cyk_on_script(script)
 
     script = '''
-    select count edges from (setStartAndFinal _ _ "graph")
+    select count edges from ("graph1" && ("graph2" && "graph3"))
     '''
     assert run_cyk_on_script(script)
 
@@ -61,6 +71,11 @@ def test_correct_syntax():
 def test_wrong_syntax():
     script = '''
     select count count edges from "graph"
+    '''
+    assert not run_cyk_on_script(script)
+
+    script = '''
+    select count edges from (setStartAndFinal string string "graph")
     '''
     assert not run_cyk_on_script(script)
 
