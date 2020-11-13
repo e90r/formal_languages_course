@@ -1,4 +1,5 @@
 from argparse import ArgumentParser
+from benchmarks.cfpq_benchmark import cfpq_benchmark
 from src.BMGraph import BMGraph
 
 
@@ -60,4 +61,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    cfpq_benchmark()
