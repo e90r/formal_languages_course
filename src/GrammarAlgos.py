@@ -2,6 +2,7 @@ from collections import deque
 from pyformlang.cfg import terminal
 from pyformlang.cfg import production
 from pyformlang.cfg.epsilon import Epsilon
+from pyformlang.regular_expression import python_regex
 from pyformlang.regular_expression.regex import Regex
 from pygraphblas import semiring
 
@@ -27,8 +28,13 @@ class GrammarAlgos:
             return CFG(new_variables, wcnf.terminals, new_start_symbol, new_productions)
         return wcnf
 
-    def prod_from_regex(head, regex):
-        enfa = Regex(regex).to_epsilon_nfa().minimize()
+    def prod_from_regex(head, regex, python_regex=False, nonterms_upper=True):
+        if python_regex:
+            regex = Regex.from_python_regex(regex)
+        else:
+            regex = Regex(regex)
+
+        enfa = regex.to_epsilon_nfa().minimize()
         transitions = enfa.to_dict()
         state_to_var = dict()
         production_set = set()
@@ -48,9 +54,9 @@ class GrammarAlgos:
 
                 if symbol.value == 'eps':
                     prod_body.append(Epsilon())
-                elif symbol.value.isupper():
+                elif nonterms_upper and symbol.value.isupper():
                     prod_body.append(Variable(symbol.value))
-                elif symbol.value.islower():
+                else:
                     prod_body.append(Terminal(symbol.value))
 
                 prod_body.append(state_to_var[body_state])
@@ -62,53 +68,55 @@ class GrammarAlgos:
 
         return production_set
 
-    def from_grammar_file(path):
+    def from_grammar_file(path, python_regex=False, nonterms_upper=True):
         with open(path, 'r') as g:
             productions = set()
 
             first_line = g.readline()
-            rule = first_line.replace('\n', '').split(' ', 1)
+            rule = first_line.strip().split(' ', 1)
             start_symbol = Variable(rule[0])
-            if any(symb in rule[1] for symb in '?+*|'):
+            if any(symb in rule[1] for symb in '?+*|') and len(rule[1]) > 1:
                 body = rule[1].replace('?', f'| eps')
-                productions |= GrammarAlgos.prod_from_regex(start_symbol, body)
+                productions |= GrammarAlgos.prod_from_regex(
+                    start_symbol, body, python_regex, nonterms_upper)
             else:
                 body = []
                 for s in rule[1].split(' '):
                     if s == 'eps':
                         e = Epsilon()
                         body.append(e)
-                    elif s.islower():
-                        t = Terminal(s)
-                        body.append(t)
                     elif s.isupper():
                         v = Variable(s)
                         body.append(v)
+                    else:
+                        t = Terminal(s)
+                        body.append(t)
                 productions.add(Production(start_symbol, body))
 
             for line in g.readlines():
-                rule = line.replace('\n', '').split(' ', 1)
+                rule = line.strip().split(' ', 1)
                 var = Variable(rule[0])
-                if any(symb in rule[1] for symb in '?+*|'):
+                if any(symb in rule[1] for symb in '?+*|') and len(rule[1]) > 1:
                     body = rule[1].replace('?', f'| eps')
-                    productions |= GrammarAlgos.prod_from_regex(var, body)
+                    productions |= GrammarAlgos.prod_from_regex(
+                        var, body, python_regex, nonterms_upper)
                 else:
                     body = []
                     for s in rule[1].split(' '):
                         if s == 'eps':
                             e = Epsilon()
                             body.append(e)
-                        elif s.islower():
-                            t = Terminal(s)
-                            body.append(t)
                         elif s.isupper():
                             v = Variable(s)
                             body.append(v)
+                        else:
+                            t = Terminal(s)
+                            body.append(t)
                     productions.add(Production(var, body))
 
             return CFG(start_symbol=start_symbol, productions=productions)
 
-    def CYK(grammar: CFG, word: str):
+    def CYK(grammar: CFG, word):
         size = len(word)
         if size == 0:
             return grammar.generate_epsilon()
