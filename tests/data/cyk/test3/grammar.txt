@@ -1,5 +1,5 @@
 S a S
 S b T
-S
+S eps
 T a T
 T b S

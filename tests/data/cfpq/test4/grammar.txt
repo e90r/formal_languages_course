@@ -1,7 +1,7 @@
 S A B C
 A a A
-A
+A eps
 B b B
-B
+B eps
 C c C
-C
+C eps
