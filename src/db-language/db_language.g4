@@ -78,7 +78,7 @@ IS_START : 'isStart' ;
 IS_FINAL : 'isFinal' ;
 TERM : 'term' ;
 NONTERM : 'var' ;
-EPS : 'e' ;
+EPS : 'eps' ;
 STRING : (LOWERCASE | UPPERCASE) (LOWERCASE | UPPERCASE | DIGIT | '_')* ;
 PATH : (LOWERCASE | UPPERCASE | DIGIT | '_' | '/')+ ;
 NAME : (LOWERCASE | UPPERCASE | DIGIT | '_' | '.')+ ;

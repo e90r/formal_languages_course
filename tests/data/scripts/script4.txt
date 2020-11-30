@@ -1,0 +1,2 @@
+connect "/home/egor/db" ;
+select filter (v, e, u) -> (e hasLbl abc & isStart v | !(isFinal u)) : edges from ([var(a)+ var(b)?] & "graph.txt") ;

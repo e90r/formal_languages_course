@@ -1,0 +1,2 @@
+connect "/home/egor/db"
+select count edges from "graph.txt" ;

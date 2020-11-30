@@ -1,0 +1,5 @@
+connect "/home/egor/db" ;
+select edges from "graph.txt" ;
+S : term(a)term(b)*(term(c)|term(d))+ ;
+S : eps ;
+select count edges from ("graph.txt" & grammar) ;

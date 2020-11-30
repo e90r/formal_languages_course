@@ -1,0 +1,1 @@
+select count edges from [term(a)? term(b)* (term(c)|term(d))+] ;
