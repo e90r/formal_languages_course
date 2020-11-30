@@ -4,7 +4,7 @@ grammar db_language;
  * parser rules
  */
 
-script : (stmt NEWLINE)* EOF ;
+script : (stmt ';')* EOF ;
 
 stmt : CONNECT '"' PATH '"' 
      | STRING ':' pattern
@@ -14,16 +14,16 @@ stmt : CONNECT '"' PATH '"'
 graph : GRAMMAR
       | '[' pattern ']'
       | '"' NAME '"'
-      | SET_START_FINAL vertices vertices graph
+      | '(' SET_START_FINAL vertices vertices graph ')'
       | '(' graph '&' graph ')'
       ;
 
-vertices : '{' set '}'
+vertices : '{' index_set '}'
          | INT ':' INT
          | '_'
          ;
 
-set : (INT ',')* INT ;
+index_set : (INT ',')* INT ;
 
 obj : edges
     | COUNT edges
@@ -51,7 +51,7 @@ pattern : TERM '(' STRING ')'
         | pattern '*'
         | pattern '+'
         | pattern '?'
-        | pattern '.' pattern
+        | pattern pattern
         | pattern '|' pattern
         ;
 
@@ -63,10 +63,6 @@ fragment LOWERCASE : [a-z] ;
 fragment UPPERCASE : [A-Z] ;
 fragment DIGIT : [0-9] ;
 
-NEWLINE : '\r'? '\n' ;
-PATH : (LOWERCASE | UPPERCASE | DIGIT | '_' | '/')+ ;
-STRING : (LOWERCASE | UPPERCASE) (LOWERCASE | UPPERCASE | DIGIT | '_')+;
-NAME : (LOWERCASE | UPPERCASE | DIGIT | '_' | '.')+ ;
 INT : '0' | [1-9] DIGIT* ;
 CONNECT : 'connect' ;
 SELECT : 'select' ;
@@ -81,6 +77,9 @@ HAS_LBL : 'hasLbl' ;
 IS_START : 'isStart' ;
 IS_FINAL : 'isFinal' ;
 TERM : 'term' ;
-NONTERM : 'var';
-EPS : 'e';
-WHITESPACE : ' ' -> skip ;
+NONTERM : 'var' ;
+EPS : 'e' ;
+STRING : (LOWERCASE | UPPERCASE) (LOWERCASE | UPPERCASE | DIGIT | '_')* ;
+PATH : (LOWERCASE | UPPERCASE | DIGIT | '_' | '/')+ ;
+NAME : (LOWERCASE | UPPERCASE | DIGIT | '_' | '.')+ ;
+WHITESPACE : [ \r\n\t]+ -> skip ;
