@@ -15,12 +15,12 @@ graph : GRAMMAR
       | '[' pattern ']'
       | '"' NAME '"'
       | '(' SET_START_FINAL vertices vertices graph ')'
-      | '(' graph '&' graph ')'
+      | '(' graph AND graph ')'
       ;
 
 vertices : '{' index_set '}'
          | INT ':' INT
-         | '_'
+         | ANY
          ;
 
 index_set : (INT ',')* INT ;
@@ -39,20 +39,20 @@ bool_expr : STRING HAS_LBL STRING
           | IS_START STRING
           | IS_FINAL STRING
           | '(' bool_expr ')'
-          | '!' bool_expr
-          | bool_expr '&' bool_expr
-          | bool_expr '|' bool_expr
+          | NEG bool_expr
+          | bool_expr AND bool_expr
+          | bool_expr OR bool_expr
           ;
 
 pattern : TERM '(' STRING ')'
         | NONTERM '(' STRING ')'
         | EPS
         | '(' pattern ')'
-        | pattern '*'
-        | pattern '+'
-        | pattern '?'
+        | pattern STAR
+        | pattern PLUS
+        | pattern OPT
         | pattern pattern
-        | pattern '|' pattern
+        | pattern OR pattern
         ;
 
 /*
@@ -64,6 +64,13 @@ fragment UPPERCASE : [A-Z] ;
 fragment DIGIT : [0-9] ;
 
 INT : '0' | [1-9] DIGIT* ;
+AND : '&' ;
+ANY : '_' ;
+NEG : '!' ;
+OR : '|' ;
+STAR : '*' ;
+PLUS : '+' ;
+OPT : '?' ;
 CONNECT : 'connect' ;
 SELECT : 'select' ;
 FROM : 'from' ;
