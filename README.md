@@ -1,6 +1,6 @@
 # Formal Languages Course
 
-[![Build Status](https://travis-ci.org/e90r/formal_languages_course.svg?branch=assignment_8)](https://travis-ci.org/e90r/formal_languages_course)
+[![Build Status](https://travis-ci.com/e90r/formal_languages_course.svg?branch=assignment_8)](https://travis-ci.com/e90r/formal_languages_course)
 
 ## Assignment 1
 
