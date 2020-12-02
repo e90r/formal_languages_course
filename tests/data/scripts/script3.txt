@@ -1,0 +1,2 @@
+connect "/home/egor/db" ;
+select filter (v, e, u) -> (e hasLbl abc) : edges from "graph.txt" ;

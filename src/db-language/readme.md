@@ -4,22 +4,22 @@
 
 Script consists of 3 types of statements:
 
-- `connect "%db_name%"` - set database directory
+- `connect "%db_name%" ;` - set database directory
     - ### Example: 
         ```
-        connect "/home/egor/db"
+        connect "/home/egor/db" ;
         ```
 
-- `%production_head% : %production_body%` - add production to grammar
+- `%production_head% : %production_body% ;` - add production to grammar
     - `%production_head%` is a string representation of production head
     - `%production_body%` can be a regular expression
     - ### Example: 
         ```
-        S : term(a).nonterm(S).term(b).nonterm(S)
-        S : e
+        S : term(a)var(S)term(b)var(S) ;
+        S : eps ;
         ```
 
-- `select %obj% from %graph%` - get specified objective from graph
+- `select %obj% from %graph% ;` - get specified objective from graph
     - `%obj%` can be `count`, `edges` or `filter`
         - `count` will count a number of edges in graph
         - `edges` will return all edges (v, e, u) in graph
@@ -42,10 +42,10 @@ Script consists of 3 types of statements:
 
     - ### Examples:
         ```
-        select count edges from ("graph" & grammar)
-        select count edges from (setStartAndFinal 0:6 {1,3,4} "graph")
-        select filter (v, e, u) -> (e hasLbl abc) : edges from "graph"
-        select filter (v, e, u) -> (e hasLbl abc & isStart v | !(isFinal u)) : edges from "graph"
-        select edges from [term(a).term(b)*.(term(c)|term(d))+]
+        select count edges from ("graph.txt" & grammar) ;
+        select count edges from (setStartAndFinal 0:6 {1,3,4} "graph.txt") ;
+        select filter (v, e, u) -> (e hasLbl abc) : edges from "graph.txt" ;
+        select filter (v, e, u) -> (e hasLbl abc & isStart v | !(isFinal u)) : edges from "graph.txt" ;
+        select edges from [term(a) term(b)* (term(c)|term(d))+] ;
         ```
         

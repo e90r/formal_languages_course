@@ -1,0 +1,4 @@
+connect "/home/egor/db" ;
+select count edges from (setStartAndFinal 0:6 {1,3,4} "graph.txt") ;
+select count edges from (setStartAndFinal 0:6 _ ("graph.txt" & [var(a)*])) ;
+select count edges from (setStartAndFinal _ _ "graph.txt") ;

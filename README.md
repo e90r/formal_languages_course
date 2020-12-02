@@ -1,6 +1,6 @@
 # Formal Languages Course
 
-[![Build Status](https://travis-ci.org/e90r/formal_languages_course.svg?branch=assignment_5)](https://travis-ci.org/e90r/formal_languages_course)
+[![Build Status](https://travis-ci.com/e90r/formal_languages_course.svg?branch=assignment_8)](https://travis-ci.com/e90r/formal_languages_course)
 
 ## Assignment 1
 
@@ -70,3 +70,33 @@ Full results you can see at `./benchmarks/cfpq_report.pdf`
 Implemented syntax for script language for graph database. Grammar can be found in `./src/db-language/grammar.txt` file.
 
 See README about syntax [HERE](src/db-language/readme.md).
+
+## Assignment 8
+
+Added ANTLR grammar for db lanbuage. Added tree DOT-file generation.
+
+Prerequisites (install ANTLR4 and generate neccessary files, assuming you are in root directory):
+
+```
+sudo apt-get update
+sudo apt-get install antlr4
+pip install antlr4-python3-runtime
+cd src/db-language && antlr4 -Dlanguage=Python3 -o ../ db_language.g4 && cd ../../
+```
+
+To generate DOT file:
+
+```
+usage: tree.py [-h] script dot_file
+
+Generate DOT file with parse tree of given script
+
+positional arguments:
+  script      Path to script written in DB language
+  dot_file    Path to save generated DOT file
+
+optional arguments:
+  -h, --help  show this help message and exit
+```
+
+Example: `python tree.py ./tests/data/scripts/script1.txt ./tree.dot`
